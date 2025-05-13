@@ -1,6 +1,13 @@
 from django.http import JsonResponse
+import datetime
 
-# Create your views here.
+def test(request):
+    time = datetime.datetime.now()
+    response = {
+        "msg" : "KeepCalm !, It works",
+        "server-time" : time.strftime("%d %B %Y | %H:%M:%S WIB")
+    }
+    return JsonResponse(response)
 
-def hello_world(request):
-    return JsonResponse({"msg" : "Haii semuaa...."})
+def getAllData(request):
+    return JsonResponse({"msg":"getAllData"})
