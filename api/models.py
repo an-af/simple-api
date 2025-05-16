@@ -78,7 +78,7 @@ class AuthUserUserPermissions(models.Model):
 
 
 class Customer(models.Model):
-    id = models.BigAutoField(primary_key=True)
+    id =models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     email = models.CharField(unique=True, max_length=100, blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
