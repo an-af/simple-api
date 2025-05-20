@@ -14,13 +14,27 @@ def test(request):
     }
     return JsonResponse(response)
 
-# get all Data
+# get all & post Data 
+@csrf_exempt 
 def getAllData(request):
     try:
-        data = Customer.objects.all().values('id','name','email','phone')
-        print(data)
-        return JsonResponse({"customers" : list(data)})
-    
+        if request.method == 'GET':
+            data = Customer.objects.all().values('id','name','email','phone')
+            return JsonResponse({"customers" : list(data)}, status=200)
+        else: 
+            # receive & process data
+            temp = json.loads(request.body.decode('UTF-8'))
+            data = {
+                'name' : temp.get('name'),
+                'email' : temp.get('email'),
+                'phone' : temp.get('phone'),
+            }
+            # save data
+            customerData = Customer(**data) 
+
+            customerData.save()
+
+            return JsonResponse({"msg" : "data saved !", "data" : data},status=200)
     except Exception as e:
         return JsonResponse({"error":str(e)}, status=500)
 
