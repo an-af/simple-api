@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from .models import Customer
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ObjectDoesNotExist
 import datetime
 
 # testing
@@ -54,6 +55,28 @@ def operationDataByID(request, customer_id):
             return JsonResponse({"msg":'delete data success'}, status=200)
     except Exception as e:
         return JsonResponse({"error":str(e)}, status=500)
-
-
-
+    
+# edit data
+@csrf_exempt
+def updateData(request, customer_id):
+    try:
+        if request.method == 'PATCH':
+            customer = Customer.objects.get(id = customer_id)
+            temp  = json.loads(request.body.decode('UTF-8'))
+            customer.name = temp['name']
+            customer.email = temp['email']
+            customer.phone = temp['phone']
+            print(customer)
+            
+            responseData = {
+                'name' : customer.name,
+                'email' : customer.email,
+                'phone' : customer.phone
+            }
+            return JsonResponse({"status" : "OK", "data" : responseData}, status = 200)
+        else:
+            return JsonResponse({"msg" : "method not allowed"}, status = 405)
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": "Customer not found"}, status = 404)
+    except Exception as msg:
+        return JsonResponse({"error": str(msg)}, status = 500)
